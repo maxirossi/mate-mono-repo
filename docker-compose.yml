@@ -1,0 +1,130 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres_mate
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mate
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ms-users:
+    build:
+      context: ./ms-users
+    container_name: ms-users
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/mate
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ms-users:/src
+    command: npm run start:dev
+
+  ms-auth:
+    build:
+      context: ./ms-auth
+    container_name: ms-auth
+    ports:
+      - "3050:3050"
+    volumes:
+      - ./ms-auth:/app
+    working_dir: /app
+    environment:
+      - PORT=3050
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/mate
+      - JWT_SECRET=my_super_secret_key
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+    command: npm run start:dev
+
+  user-frontend:
+    build:
+      context: ./user-frontend
+    container_name: public_user_nextjs_frontend
+    ports:
+      - "3030:3030"
+    volumes:
+      - ./user-frontend:/app
+    working_dir: /app
+    environment:
+      - PORT=3030
+    command: npm run dev
+    depends_on:
+      - ms-users
+
+  backoffice-frontend:
+    build:
+      context: ./backoffice-frontend
+    container_name: backoffice_nextjs_frontend
+    ports:
+      - "3040:3040"
+    volumes:
+      - ./backoffice-frontend:/app
+    working_dir: /app
+    environment:
+      - PORT=3040
+    command: npm run dev
+    depends_on:
+      - ms-users
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka_ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ms-users
+      - ms-auth
+      - user-frontend
+      - backoffice-frontend
+
+volumes:
+  postgres_data:

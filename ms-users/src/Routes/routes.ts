@@ -25,7 +25,4 @@ router.put(`/${apiVersion}/users/:userId`, (req: Request, res: Response) => user
 router.delete(`/${apiVersion}/users/:userId`, (req: Request, res: Response) => usersController.deleteUser(req, res));
 router.post(`/${apiVersion}/users/authenticate`, (req: Request, res: Response) => usersController.authenticateUser(req, res));
 
-
-/* Palindrome */
-
 export default router;
