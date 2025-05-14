@@ -1,0 +1,15 @@
+model User {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @unique @default(uuid())
+  name            String
+  lastName        String
+  email           String   @unique
+  user            String   @unique
+  password        String
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  deletedAt       DateTime?
+  modifiedAt      DateTime? @updatedAt
+
+  @@map("users")
+}
