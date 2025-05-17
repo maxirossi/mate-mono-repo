@@ -2,6 +2,10 @@ import { existsSync } from 'fs';
 import { execSync } from 'child_process';
 import path from 'path';
 
+import { registerDomainEvents } from '@Shared/domain/RegisterDomainEvents';
+registerDomainEvents();
+
+
 const clientPath = path.join(__dirname, '..', 'node_modules', '.prisma', 'client');
 if (!existsSync(clientPath)) {
   console.warn('⚠ Prisma client not found. Running prisma generate...');
@@ -25,6 +29,7 @@ import WinstonLogger from './Modules/Shared/infrastructure/WinstoneLogger';
 import cors from 'cors';
 import routes from './Routes/routes';
 import swaggerUi from 'swagger-ui-express';
+import { Middleware } from '@Shared/infrastructure/middleware/middleware';
 const swaggerOutput = require('./swagger_output.json');
 
 export class Server {
@@ -41,6 +46,7 @@ export class Server {
     this.express.use(cors());
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: true }));
+    this.express.use(Middleware);
 
     const router = Router();
     this.express.use(routes);
