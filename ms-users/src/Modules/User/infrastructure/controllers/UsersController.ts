@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { Name } from '../../../Shared/domain/value-object/User/Name';
-import { LastName } from '../../../Shared/domain/value-object/User/LastName';
-import { Email } from '../../../Shared/domain/value-object/Email';
-import { UserName } from '../../../Shared/domain/value-object/User/UserName';
-import { UserPassword } from '../../../Shared/domain/value-object/User/UserPassword';
-import { Active } from '../../../Shared/domain/value-object/User/Active';
-import { Uuid } from '../../../Shared/domain/value-object/Uuid';
-import { CreatedAt } from '../../../Shared/domain/value-object/CreatedAt';
-import { Page } from '../../../Shared/domain/value-object/Page';
-import { HttpResponseCodes } from '../../../Shared/HttpResponseCodes';
-import { UsersService } from '../../application/services/UsersService';
-import Logger from '../../../Shared/domain/Logger';
-import WinstonLogger from '../../../Shared/infrastructure/WinstoneLogger';
-import { GeneralConstants } from '../../../Shared/constants';
-import { ControllerError } from '../../../Shared/domain/exceptions/ControllerException';
+import { Name } from '@Shared/domain/value-object/User/Name';
+import { LastName } from '@Shared/domain/value-object/User/LastName';
+import { Email } from '@Shared/domain/value-object/Email';
+import { UserName } from '@Shared/domain/value-object/User/UserName';
+import { UserPassword } from '@Shared/domain/value-object/User/UserPassword';
+import { Active } from '@Shared/domain/value-object/User/Active';
+import { Uuid } from '@Shared/domain/value-object/Uuid';
+import { CreatedAt } from '@Shared/domain/value-object/CreatedAt';
+import { Page } from '@Shared/domain/value-object/Page';
+import { HttpResponseCodes } from '@Shared/HttpResponseCodes';
+import { UsersService } from '@User/application/services/UsersService';
+import Logger from '@Shared/domain/Logger';
+import WinstonLogger from '@Shared/infrastructure/WinstoneLogger';
+import { GeneralConstants } from '@Shared/constants';
+import { ControllerError } from '@Shared/domain/exceptions/ControllerException';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const bcrypt = require('bcrypt');
 

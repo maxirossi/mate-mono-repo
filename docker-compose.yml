@@ -63,21 +63,6 @@ services:
     depends_on:
       - ms-users
 
-  backoffice-frontend:
-    build:
-      context: ./backoffice-frontend
-    container_name: backoffice_nextjs_frontend
-    ports:
-      - "3040:3040"
-    volumes:
-      - ./backoffice-frontend:/app
-    working_dir: /app
-    environment:
-      - PORT=3040
-    command: npm run dev
-    depends_on:
-      - ms-users
-
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
@@ -124,7 +109,6 @@ services:
       - ms-users
       - ms-auth
       - user-frontend
-      - backoffice-frontend
 
 volumes:
   postgres_data:
